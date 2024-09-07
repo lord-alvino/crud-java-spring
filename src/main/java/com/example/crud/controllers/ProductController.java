@@ -2,25 +2,50 @@ package com.example.crud.controllers;
 
 import com.example.crud.domain.product.Product;
 import com.example.crud.domain.product.ProductRepository;
+import com.example.crud.domain.product.RequestCategory;
 import com.example.crud.domain.product.RequestProduct;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/product")
 public class ProductController {
     @Autowired
     private ProductRepository repository;
+
     @GetMapping
     public ResponseEntity getAllProducts(){
         var allProducts = repository.findAllByActiveTrue();
         return ResponseEntity.ok(allProducts);
+    }
+
+    @GetMapping("/category/{categoryAsPath}")
+    public ResponseEntity getProductsByCategory(
+            @RequestHeader String categoryAsHeader,
+            @PathVariable String categoryAsPath,
+            @RequestBody @Valid RequestCategory categoryAsBody,
+            @RequestParam String categoryAsParam
+    ){
+        var allProducts = repository.findAllByActiveTrue();
+        List<Product> filteredProducts = new ArrayList<>();
+
+        for (int i = 0; i < allProducts.size(); i++) {
+            Product product = allProducts.get(i);
+            if (categoryAsParam.equals(product.getCategory())) {
+                filteredProducts.add(product);
+            }
+        }
+        return ResponseEntity.ok(filteredProducts);
     }
 
     @PostMapping

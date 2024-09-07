@@ -22,9 +22,12 @@ public class Product {
 
     private Boolean active;
 
+    private String category;
+
     public Product(RequestProduct requestProduct){
         this.name = requestProduct.name();
         this.price = requestProduct.price();
+        this.category = requestProduct.category();
         this.active = true;
     }
 }

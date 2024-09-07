@@ -11,6 +11,8 @@ public record RequestProduct(
         @NotBlank
         String name,
         @NotNull
-        Integer price
+        Integer price,
+        @NotBlank
+        String category
 ) {
 }
